@@ -41,6 +41,7 @@ async def upload_document(file: UploadFile = File(...)) -> dict[str, str | int]:
     return {"document_id": document_id, "filename": filename,
             "page_count": page_count, "chunk_count": chunk_count}
 
+
 @router.post("/ask", response_model=AskResponse)
 def ask(request: AskRequest) -> AskResponse:
     settings = get_settings()
@@ -52,9 +53,22 @@ def ask(request: AskRequest) -> AskResponse:
     request_id = str(uuid4())
     try:
         result = workflow.invoke({"question": question, "request_id": request_id})
-        return AskResponse(request_id=request_id,
-                           answer=result.get("answer", "No answer was generated.")[0]['text'],
-                           sources=[SourceReference(**s) for s in result.get("sources", [])])
+        
+        # Safely extract the answer whether it's a list of dicts or a plain string
+        raw_answer = result.get("answer", "No answer was generated.")
+        if isinstance(raw_answer, list) and raw_answer:
+            if isinstance(raw_answer[0], dict):
+                answer_text = raw_answer[0].get("text", "No answer was generated.")
+            else:
+                answer_text = str(raw_answer[0])
+        else:
+            answer_text = str(raw_answer)
+
+        return AskResponse(
+            request_id=request_id,
+            answer=answer_text,
+            sources=[SourceReference(**s) for s in result.get("sources", [])]
+        )
     except FileNotFoundError as exc:
         logger.error("rag_index_missing", request_id=request_id)
         raise HTTPException(status_code=503, detail="Knowledge index is not ready.") from exc
