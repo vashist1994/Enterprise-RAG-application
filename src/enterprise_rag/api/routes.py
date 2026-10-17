@@ -53,7 +53,7 @@ def ask(request: AskRequest) -> AskResponse:
     try:
         result = workflow.invoke({"question": question, "request_id": request_id})
         return AskResponse(request_id=request_id,
-                           answer=result.get("answer", "No answer was generated."),
+                           answer=result.get("answer", "No answer was generated.")[0]['text'],
                            sources=[SourceReference(**s) for s in result.get("sources", [])])
     except FileNotFoundError as exc:
         logger.error("rag_index_missing", request_id=request_id)
