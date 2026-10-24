@@ -17,6 +17,7 @@
 }
 
 * { box-sizing: border-box; }
+html { min-width: 320px; min-height: 100%; }
 body { margin: 0; min-width: 320px; min-height: 100vh; }
 button, textarea { font: inherit; }
 button { color: inherit; }
@@ -142,32 +143,77 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid #83b7a2; outli
   .empty-state { width: min(100% - 48px, 540px); }
 }
 @media (max-width: 640px) {
-  .app-shell { flex-direction: column; }
-  .sidebar { width: 100%; flex: 0 0 auto; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0 12px; padding: 11px 16px; }
+  .app-shell { height: 100vh; height: 100dvh; min-height: 0; flex-direction: column; overflow: hidden; }
+  .sidebar { width: 100%; flex: 0 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0 12px; padding: 11px 16px; padding-top: max(11px, env(safe-area-inset-top)); }
   .brand { margin: 0; font-size: 18px; }
   .brand-mark { width: 29px; height: 29px; }
   .sidebar > .sidebar-section-label, .side-link, .library-heading, .sidebar-upload, .sidebar-note, .sidebar-footer { display: none; }
-  .document-card { max-width: min(56vw, 250px); padding: 6px 7px; }
+  .document-card { min-width: 0; max-width: min(56vw, 250px); padding: 6px 7px; }
   .document-icon { width: 27px; height: 29px; flex-basis: 27px; }
   .document-icon svg { width: 16px; }
   .document-name { max-width: 34vw; font-size: 10px; }
   .document-meta { font-size: 9px; }
-  .main-panel { min-height: 0; flex: 1; }
-  .topbar { height: 57px; flex-basis: 57px; padding: 0 15px; }
+  .main-panel { width: 100%; min-width: 0; min-height: 0; flex: 1 1 auto; }
+  .topbar { min-width: 0; height: 57px; flex: 0 0 57px; padding: 0 15px; }
   .breadcrumb { gap: 7px; font-size: 11px; }
   .connection-status { display: none; }
   .top-upload { min-height: 33px; padding-inline: 10px; font-size: 10px; }
-  .conversation { min-height: 300px; }
-  .empty-state { width: calc(100% - 40px); padding: 42px 0 45px; }
+  .conversation { width: 100%; min-height: 0; flex: 1 1 auto; overscroll-behavior: contain; }
+  .empty-state { width: calc(100% - 40px); flex: 0 0 auto; padding: 42px 0 45px; }
   .empty-symbol { margin-top: 27px; }
-  .empty-state h1 { font-size: 42px; }
+  .empty-state h1 { font-size: clamp(36px, 10vw, 42px); }
   .empty-state > p { font-size: 13px; }
   .upload-zone { gap: 10px; padding: 12px; }
   .upload-zone-copy small { font-size: 9px; }
   .upload-zone-arrow { display: none; }
-  .message-list, .composer-area { width: calc(100% - 32px); }
-  .message-list { gap: 22px; padding-top: 25px; }
+  .message-list { width: calc(100% - 32px); gap: 22px; padding-top: 25px; }
+  .composer-area { width: 100%; flex: 0 0 auto; padding: 8px 16px max(10px, env(safe-area-inset-bottom)); background: #f7f9f6; }
   .message-body p { font-size: 12px; }
-  .composer-area { padding-bottom: 10px; }
   .disclaimer { font-size: 8px; }
+}
+
+@media (max-width: 420px) {
+  .sidebar { padding-inline: 12px; column-gap: 8px; }
+  .brand { gap: 7px; font-size: 16px; }
+  .brand-mark { width: 27px; height: 27px; }
+  .document-card { max-width: 52vw; gap: 6px; }
+  .document-name { max-width: 27vw; }
+  .document-meta { display: none; }
+  .topbar { gap: 8px; padding-inline: 12px; }
+  .breadcrumb { min-width: 0; gap: 6px; font-size: 10px; }
+  .topbar-actions { flex: 0 0 auto; }
+  .top-upload { gap: 6px; padding-inline: 8px; }
+  .empty-state { width: calc(100% - 32px); }
+  .upload-zone { gap: 8px; padding: 10px; }
+  .upload-zone-copy strong { font-size: 11px; }
+}
+
+@media (max-width: 360px) {
+  .breadcrumb > span:first-child,
+  .breadcrumb .crumb-slash { display: none; }
+  .top-upload span { max-width: 78px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .message-list { width: calc(100% - 24px); }
+  .composer-area { padding-inline: 12px; }
+  .composer-hint { font-size: 9px; }
+}
+
+@media (max-width: 640px) and (max-height: 560px) {
+  .sidebar { padding-block: 7px; }
+  .brand-mark { width: 25px; height: 25px; }
+  .topbar { height: 49px; flex-basis: 49px; }
+  .empty-state { padding-block: 20px; }
+  .empty-symbol { width: 42px; height: 42px; margin-top: 15px; }
+  .empty-symbol svg { width: 23px; }
+  .empty-state h1 { margin-block: 12px 8px; font-size: 34px; }
+  .upload-zone { min-height: 62px; margin-top: 16px; }
+  .privacy-note { margin-top: 11px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
