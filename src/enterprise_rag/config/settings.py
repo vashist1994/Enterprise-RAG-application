@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     google_api_key: str = Field(min_length=1)
-    google_chat_model: str = "gemini-3.8-flash"
+    google_chat_model: str = "gemini-3.5-flash"
     google_embedding_model: str = "gemini-embedding-2"
     pinecone_api_key: str = Field(min_length=1)
     pinecone_index_name: str = "enterprise-rag"
