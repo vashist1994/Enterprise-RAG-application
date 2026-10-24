@@ -38,6 +38,16 @@ docker compose up --build
 
 Open the UI at `http://127.0.0.1:8080`. The UI container serves the built React app and proxies `/api` and `/health` to the separate RAG API container. The API is also available locally at `http://127.0.0.1:8000` for API docs and development; uploaded documents persist in `data/`.
 
+## Deploy to Render
+
+This repository includes a Render Blueprint (`render.yaml`) that deploys the React UI and FastAPI API together as one Docker web service. The UI calls the API on the same origin, so no separate frontend service or CORS configuration is needed.
+
+1. Push the repository to GitHub and create a new **Blueprint** in Render, then connect the repository.
+2. When prompted, provide `GOOGLE_API_KEY` and `PINECONE_API_KEY`. The Blueprint sets the other environment variables; update `PINECONE_INDEX_NAME`, `PINECONE_NAMESPACE`, and the model settings if your Pinecone index or models use different values.
+3. Wait for the Docker build and health check to complete, then open the service's `onrender.com` URL. The API docs are at `/docs`.
+
+Create a Pinecone index compatible with the configured embedding model before uploading documents. The Blueprint uses Render's free web-service plan: the service may spin down when idle, and its local filesystem is temporary. Pinecone stores the indexed vectors, but original uploaded PDFs in `DOCUMENTS_DIR` do not survive restarts or redeploys. Use a paid Render plan with a persistent disk and set `DOCUMENTS_DIR` to a directory on that disk if the original files must be retained.
+
 ## GitHub Actions
 
 The UI and RAG pipelines run independently when their respective paths change, on pull requests, and by manual dispatch. Pull requests test/build the images without publishing; pushes to the repository's default branch publish `docker.io/<namespace>/enterprise-rag-ui` and `docker.io/<namespace>/enterprise-rag-api` with `latest` and commit-SHA tags. Configure the `DOCKERHUB_NAMESPACE` Actions variable and the `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` Actions secrets. Create a Docker Hub access token with write permission for the target namespace.

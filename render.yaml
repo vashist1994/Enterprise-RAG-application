@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: enterprise-rag
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: PINECONE_API_KEY
+        sync: false
+      - key: APP_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: INFO
+      - key: DOCUMENTS_DIR
+        value: /tmp/rag-documents
+      - key: PINECONE_INDEX_NAME
+        value: enterprise-rag
+      - key: PINECONE_NAMESPACE
+        value: enterprise-rag
